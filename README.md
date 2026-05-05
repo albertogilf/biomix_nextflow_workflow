@@ -335,7 +335,7 @@ Notes:
 
 ## Testing
 
-There are two test targets under [test/Makefile](test/Makefile):
+There are three test targets under [test/Makefile](test/Makefile):
 
 - `make -C test test-biomix-transcriptomics-gold`
   Runs the transcriptomics example and compares selected TSV outputs against the
@@ -343,6 +343,11 @@ There are two test targets under [test/Makefile](test/Makefile):
   integration. If you want to force the current `biomix_transcriptomics`
   environment, use the explicit command in
   [Transcriptomics gold-standard test](#transcriptomics-gold-standard-test).
+
+- `make -C test test-biomix-methylomics-gold`
+  Runs the methylomics example with `biomix_methylomics`, skips transcriptomics,
+  and compares selected methylomics TSV outputs against
+  `bin/BiomiX2.5/Methylomics/OUTPUT`.
 
 - `make -C test test-biomix-mofa-gold`
   Runs the larger transcriptomics+methylomics+MOFA flow and compares selected

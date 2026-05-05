@@ -1,0 +1,22 @@
+{
+  "files": [
+    {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/DMP_METHY_Methylome_mutated_vs_unmutated.tsv"
+    },
+    {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/METHY_mutated_unmutated_GENESUP.tsv"
+    },
+    {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/METHY_mutated_unmutated_GENESDOWN.tsv"
+    },
+    {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/METHY_mutated_unmutated_UP.tsv"
+    },
+    {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/METHY_mutated_unmutated_DOWN.tsv"
+    },
+    {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/mutated_unmutated_METHY_metadata.tsv"
+    }
+  ]
+}
