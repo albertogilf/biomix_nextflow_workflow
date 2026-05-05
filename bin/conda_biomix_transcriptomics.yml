@@ -1,19 +1,24 @@
+name: biomix_transcriptomics
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - python=3.11
-  - pandas>=2.2.0
   - numpy>=2.0.0
-  - r-base=4.3
-  - r-tidyverse
-  - r-vroom
-  - r-readxl
-  - r-jsonlite
-  - r-ggrepel
-  - r-pheatmap
-  - r-enrichr
+  - r-base=4.4
+  - r-vroom=1.6.5
+  - r-dplyr=1.1.4
+  - r-tidyverse=2.0.0
+  - r-readxl=1.4.3
+  - r-jsonlite=1.8.8
+  - r-ggrepel=0.9.5
+  - r-enrichr=3.2
+  - r-circlize=0.4.16
+  - r-stringr=1.5.1
+  - r-ggplot2=3.5.1
+  - r-remotes
+  - r-biocmanager
   - bioconductor-complexheatmap
   - bioconductor-deseq2
-  - bioconductor-genefilter
+  - bioconductor-edger
+  - bioconductor-limma

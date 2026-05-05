@@ -3,11 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import shutil
 from pathlib import Path
-
-import pandas as pd
-
 
 REQUIRED_COMMAND_FILES = (
     "COMMANDS.tsv",
@@ -83,34 +81,52 @@ def patch_commands(
     methylomics_filename: str,
     methylomics_label: str,
 ) -> None:
-    commands = pd.read_csv(command_path, sep="\t")
+    with command_path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        fieldnames = list(reader.fieldnames or [])
+        commands = list(reader)
 
-    first_column = commands.columns[0]
-    if first_column.startswith("Unnamed:"):
-        commands = commands.rename(columns={first_column: ""})
+    if not fieldnames:
+        raise ValueError(f"COMMANDS.tsv is empty: {command_path}")
 
-    transcriptomics_rows = commands["DATA_TYPE"].eq("Transcriptomics")
-    if transcriptomics_rows.sum() != 1:
+    if fieldnames[0].startswith("Unnamed:"):
+        old_name = fieldnames[0]
+        fieldnames[0] = ""
+        for row in commands:
+            row[""] = row.pop(old_name)
+
+    transcriptomics_rows = [
+        row for row in commands if row.get("DATA_TYPE") == "Transcriptomics"
+    ]
+    if len(transcriptomics_rows) != 1:
         raise ValueError(
             "Expected exactly one Transcriptomics row in COMMANDS.tsv for the first workflow slice."
         )
 
-    commands.loc[transcriptomics_rows, "DIRECTORIES"] = transcriptomics_filename
-    commands.loc[transcriptomics_rows, "LABEL"] = transcriptomics_label
+    transcriptomics_rows[0]["DIRECTORIES"] = transcriptomics_filename
+    transcriptomics_rows[0]["LABEL"] = transcriptomics_label
 
-    methylomics_rows = commands["DATA_TYPE"].eq("Methylomics")
-    if methylomics_rows.any():
+    methylomics_rows = [
+        row for row in commands if row.get("DATA_TYPE") == "Methylomics"
+    ]
+    if methylomics_rows:
         if methylomics_filename:
-            commands.loc[methylomics_rows, "DIRECTORIES"] = methylomics_filename
-            commands.loc[methylomics_rows, "LABEL"] = methylomics_label
-            commands.loc[methylomics_rows, "ANALYSIS"] = "YES"
+            for row in methylomics_rows:
+                row["DIRECTORIES"] = methylomics_filename
+                row["LABEL"] = methylomics_label
+                row["ANALYSIS"] = "YES"
         else:
-            commands.loc[methylomics_rows, "ANALYSIS"] = "NO"
-            commands.loc[methylomics_rows, "INTEGRATION"] = "NO"
+            for row in methylomics_rows:
+                row["ANALYSIS"] = "NO"
+                row["INTEGRATION"] = "NO"
 
-    commands.loc[:, "PREVIEW"] = "NO"
+    for row in commands:
+        row["PREVIEW"] = "NO"
 
-    commands.to_csv(command_path, sep="\t", index=False)
+    with command_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, delimiter="\t")
+        writer.writeheader()
+        writer.writerows(commands)
 
 
 def main() -> None:

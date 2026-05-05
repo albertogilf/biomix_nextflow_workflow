@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
+import math
 from pathlib import Path
-
-import numpy as np
-import pandas as pd
 
 
 def parse_args() -> argparse.Namespace:
@@ -21,40 +20,92 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def compare_frames(actual: pd.DataFrame, gold: pd.DataFrame, atol: float, rtol: float) -> list[str]:
-    errors: list[str] = []
+def read_tsv(path: Path) -> tuple[list[str], list[dict[str, str]]]:
+    with path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.reader(handle, delimiter="\t")
+        try:
+            fieldnames = next(reader)
+        except StopIteration:
+            return [], []
 
-    if list(actual.columns) != list(gold.columns):
+        rows = []
+        for values in reader:
+            row = {}
+            if len(values) == len(fieldnames) + 1:
+                row["__index__"] = values[0]
+                values = values[1:]
+            for name, value in zip(fieldnames, values):
+                row[name] = value
+            rows.append(row)
+
+    return fieldnames, rows
+
+
+def parse_float(value: str) -> float | None:
+    if value in {"", "NA", "NaN", "nan"}:
+        return math.nan
+    try:
+        return float(value)
+    except ValueError:
+        return None
+
+
+def numeric_values_close(actual: str, gold: str, atol: float, rtol: float) -> bool:
+    actual_float = parse_float(actual)
+    gold_float = parse_float(gold)
+
+    if actual_float is None or gold_float is None:
+        return False
+    if math.isnan(actual_float) and math.isnan(gold_float):
+        return True
+    return math.isclose(actual_float, gold_float, abs_tol=atol, rel_tol=rtol)
+
+
+def compare_frames(
+    actual: tuple[list[str], list[dict[str, str]]],
+    gold: tuple[list[str], list[dict[str, str]]],
+    atol: float,
+    rtol: float,
+) -> list[str]:
+    errors: list[str] = []
+    actual_columns, actual_rows = actual
+    gold_columns, gold_rows = gold
+
+    if actual_columns != gold_columns:
         errors.append("Column names differ.")
         return errors
 
     # BiomiX output tables can be identical up to row ordering, so align by
     # row identifier before comparing values.
-    actual = actual.sort_index().copy()
-    gold = gold.sort_index().copy()
+    if "ID" in actual_columns:
+        actual_rows = sorted(actual_rows, key=lambda row: row.get("ID") or "")
+        gold_rows = sorted(gold_rows, key=lambda row: row.get("ID") or "")
+    elif any("__index__" in row for row in actual_rows + gold_rows):
+        actual_rows = sorted(actual_rows, key=lambda row: row.get("__index__") or "")
+        gold_rows = sorted(gold_rows, key=lambda row: row.get("__index__") or "")
 
-    if "ID" in actual.columns and "ID" in gold.columns:
-        actual = actual.sort_values("ID", na_position="last").reset_index(drop=True)
-        gold = gold.sort_values("ID", na_position="last").reset_index(drop=True)
-
-    if actual.shape != gold.shape:
-        errors.append(f"Shape differs: actual={actual.shape}, gold={gold.shape}.")
+    actual_shape = (len(actual_rows), len(actual_columns))
+    gold_shape = (len(gold_rows), len(gold_columns))
+    if actual_shape != gold_shape:
+        errors.append(f"Shape differs: actual={actual_shape}, gold={gold_shape}.")
         return errors
 
-    for column in actual.columns:
-        actual_series = actual[column]
-        gold_series = gold[column]
+    for column in actual_columns:
+        actual_values = [row.get(column, "") for row in actual_rows]
+        gold_values = [row.get(column, "") for row in gold_rows]
+        numeric_actual = [parse_float(value) for value in actual_values]
+        numeric_gold = [parse_float(value) for value in gold_values]
 
-        if pd.api.types.is_numeric_dtype(actual_series) and pd.api.types.is_numeric_dtype(gold_series):
-            actual_values = actual_series.to_numpy(dtype=float)
-            gold_values = gold_series.to_numpy(dtype=float)
-            if not np.allclose(actual_values, gold_values, equal_nan=True, atol=atol, rtol=rtol):
+        if all(value is not None for value in numeric_actual) and all(
+            value is not None for value in numeric_gold
+        ):
+            if not all(
+                numeric_values_close(actual_value, gold_value, atol, rtol)
+                for actual_value, gold_value in zip(actual_values, gold_values)
+            ):
                 errors.append(f"Numeric values differ in column '{column}'.")
-        else:
-            actual_values = actual_series.fillna("<NA>").astype(str)
-            gold_values = gold_series.fillna("<NA>").astype(str)
-            if not actual_values.equals(gold_values):
-                errors.append(f"String values differ in column '{column}'.")
+        elif actual_values != gold_values:
+            errors.append(f"String values differ in column '{column}'.")
 
     return errors
 
@@ -90,8 +141,8 @@ def main() -> None:
             results.append(file_result)
             continue
 
-        actual_frame = pd.read_csv(actual_path, sep="\t")
-        gold_frame = pd.read_csv(gold_path, sep="\t")
+        actual_frame = read_tsv(actual_path)
+        gold_frame = read_tsv(gold_path)
         file_result["errors"] = compare_frames(actual_frame, gold_frame, args.atol, args.rtol)
         file_result["passed"] = not file_result["errors"]
         results.append(file_result)

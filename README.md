@@ -30,23 +30,41 @@ running the workflow:
 git submodule update --init --recursive
 ```
 
+The bundled example in this repository uses `./bin/BiomiX2.5` and the
+`biomix_transcriptomics` Conda environment.
+
+If your default Java is newer than Nextflow supports, point this shell at Java
+21 before running:
+
+```bash
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+export JAVA_CMD=/usr/lib/jvm/java-21-openjdk-amd64/bin/java
+```
+
 Run the bundled transcriptomics example:
 
 ```bash
 make run
 ```
 
-This executes:
+Or run it explicitly with the existing `biomix_transcriptomics` environment:
 
 ```bash
-nextflow run ./nf_workflow.nf -resume -c nextflow.config \
-  --biomix_root ./bin/NextflowModules/bin/BiomiX2.5 \
+conda run -n biomix_transcriptomics --no-capture-output \
+  nextflow run ./nf_workflow.nf -resume -c nextflow_no_conda.config \
+  --biomix_root ./bin/BiomiX2.5 \
   --command_dir ./test/fixtures/egas_transcriptomics_mutated_vs_unmutated \
-  --transcriptomics_matrix ./bin/NextflowModules/bin/BiomiX2.5/Example_dataset/EGAS00001001746/RNA_seq/EGAS00001001746_transcriptomics.tsv \
-  --metadata ./bin/NextflowModules/bin/BiomiX2.5/Example_dataset/EGAS00001001746/Metadata/EGAS00001001746_metadata_CLL.tsv \
+  --transcriptomics_matrix ./bin/BiomiX2.5/Example_dataset/EGAS00001001746/RNA_seq/EGAS00001001746_transcriptomics.tsv \
+  --metadata ./bin/BiomiX2.5/Example_dataset/EGAS00001001746/Metadata/EGAS00001001746_metadata_CLL.tsv \
   --group_1 mutated \
-  --group_2 unmutated
+  --group_2 unmutated \
+  --transcriptomics_label RNA
 ```
+
+`nextflow.config` lets Nextflow create a cached Conda environment from
+`bin/conda_biomix_transcriptomics.yml`. `nextflow_no_conda.config` disables
+that cache and uses the already-installed `biomix_transcriptomics` environment
+from the command above.
 
 ## Requirements
 
@@ -55,6 +73,8 @@ You need:
 - Nextflow
 - Java supported by your Nextflow version
 - Conda or Mamba
+- The `biomix_transcriptomics` Conda environment, or network access so Nextflow
+  can build its cached environment from `bin/conda_biomix_transcriptomics.yml`
 - Initialized Git submodules
 - Write permission in this repository, especially for `.nextflow/`, `work/`,
   and `nf_output/`
@@ -72,7 +92,7 @@ The transcriptomics workflow needs these inputs:
 - `--biomix_root`
   Path to the BiomiX 2.5 checkout used by the workflow.
   In this repo that is normally:
-  `./bin/NextflowModules/bin/BiomiX2.5`
+  `./bin/BiomiX2.5`
 
 - `--command_dir`
   Directory containing:
@@ -145,18 +165,57 @@ comparison:
 
 Those are optional for the transcriptomics-only run.
 
+## Transcriptomics gold-standard test
+
+The transcriptomics gold-standard test runs the bundled CLL example and compares
+the generated TSV outputs against reference files committed under
+`./bin/BiomiX2.5`.
+
+Use this command when you want to test with the current
+`biomix_transcriptomics` environment:
+
+```bash
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+export JAVA_CMD=/usr/lib/jvm/java-21-openjdk-amd64/bin/java
+
+conda run -n biomix_transcriptomics --no-capture-output \
+  nextflow run ./nf_workflow.nf -resume -c nextflow_no_conda.config \
+  --biomix_root ./bin/BiomiX2.5 \
+  --command_dir ./test/fixtures/egas_transcriptomics_mutated_vs_unmutated \
+  --transcriptomics_matrix ./bin/BiomiX2.5/Example_dataset/EGAS00001001746/RNA_seq/EGAS00001001746_transcriptomics.tsv \
+  --metadata ./bin/BiomiX2.5/Example_dataset/EGAS00001001746/Metadata/EGAS00001001746_metadata_CLL.tsv \
+  --group_1 mutated \
+  --group_2 unmutated \
+  --transcriptomics_label RNA \
+  --compare_gold true \
+  --gold_standard_dir ./bin/BiomiX2.5 \
+  --gold_manifest ./test/fixtures/egas_transcriptomics_mutated_vs_unmutated/gold_manifest_transcriptomics.json
+```
+
+A successful run ends with:
+
+```text
+PREPARE_BIOMIX_WORKSPACE | 1 of 1 ✔
+RUN_TRANSCRIPTOMICS      | 1 of 1 ✔
+COMPARE_GOLD_STANDARD    | 1 of 1 ✔
+Succeeded                : 3
+```
+
+The comparison report is written in the `COMPARE_GOLD_STANDARD` process work
+directory as `gold_comparison_report.json`.
+
 ## What `make run` uses
 
 The default `make run` target is configured for the bundled BiomiX CLL example:
 
 - BiomiX root:
-  `./bin/NextflowModules/bin/BiomiX2.5`
+  `./bin/BiomiX2.5`
 - Commands:
   `./test/fixtures/egas_transcriptomics_mutated_vs_unmutated`
 - Transcriptomics matrix:
-  `./bin/NextflowModules/bin/BiomiX2.5/Example_dataset/EGAS00001001746/RNA_seq/EGAS00001001746_transcriptomics.tsv`
+  `./bin/BiomiX2.5/Example_dataset/EGAS00001001746/RNA_seq/EGAS00001001746_transcriptomics.tsv`
 - Metadata:
-  `./bin/NextflowModules/bin/BiomiX2.5/Example_dataset/EGAS00001001746/Metadata/EGAS00001001746_metadata_CLL.tsv`
+  `./bin/BiomiX2.5/Example_dataset/EGAS00001001746/Metadata/EGAS00001001746_metadata_CLL.tsv`
 - Groups:
   `mutated` vs `unmutated`
 
@@ -250,7 +309,10 @@ There are two test targets under [test/Makefile](test/Makefile):
 
 - `make -C test test-biomix-transcriptomics-gold`
   Runs the transcriptomics example and compares selected TSV outputs against the
-  bundled BiomiX gold standard.
+  bundled BiomiX gold standard. This target uses Nextflow's normal Conda
+  integration. If you want to force the current `biomix_transcriptomics`
+  environment, use the explicit command in
+  [Transcriptomics gold-standard test](#transcriptomics-gold-standard-test).
 
 - `make -C test test-biomix-mofa-gold`
   Runs the larger transcriptomics+methylomics+MOFA flow and compares selected
