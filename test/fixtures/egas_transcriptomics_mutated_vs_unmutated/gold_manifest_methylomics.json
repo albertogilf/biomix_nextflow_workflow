@@ -4,16 +4,37 @@
       "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/DMP_METHY_Methylome_mutated_vs_unmutated.tsv"
     },
     {
-      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/METHY_mutated_unmutated_GENESUP.tsv"
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/METHY_mutated_unmutated_DOWN.tsv"
     },
     {
       "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/METHY_mutated_unmutated_GENESDOWN.tsv"
     },
     {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/METHY_mutated_unmutated_GENESUP.tsv"
+    },
+    {
       "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/METHY_mutated_unmutated_UP.tsv"
     },
     {
-      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/METHY_mutated_unmutated_DOWN.tsv"
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/Pathway_analysis/Pathways_DMG_EnrichR.tsv"
+    },
+    {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/Pathway_analysis/TABLES/GO_Biological_Process_2023.tsv"
+    },
+    {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/Pathway_analysis/TABLES/GO_Biological_Process_2023_downregulated.tsv"
+    },
+    {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/Pathway_analysis/TABLES/GO_Biological_Process_2023_upregulated.tsv"
+    },
+    {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/Pathway_analysis/TABLES/Reactome_2022.tsv"
+    },
+    {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/Pathway_analysis/TABLES/Reactome_2022_downregulated.tsv"
+    },
+    {
+      "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/Pathway_analysis/TABLES/Reactome_2022_upregulated.tsv"
     },
     {
       "relative_path": "Methylomics/OUTPUT/METHY_mutated_vs_unmutated/mutated_unmutated_METHY_metadata.tsv"

@@ -1,5 +1,14 @@
+#!/usr/bin/env Rscript
+
+# BiomiX transcriptomics wrapper for non-interactive Nextflow execution.
+#
+# The script prepares the global variables expected by the upstream BiomiX
+# transcriptomics module, disables live EnrichR access for reproducible offline
+# tests, and sources the staged BiomiX R code from the task workspace.
+
 cli_args <- commandArgs(trailingOnly = TRUE)
 
+# Return the value following a required command-line flag.
 parse_arg <- function(flag) {
   position <- match(flag, cli_args)
   if (is.na(position) || position == length(cli_args)) {

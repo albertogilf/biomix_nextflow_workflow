@@ -1,13 +1,43 @@
 {
   "files": [
     {
-      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/mutated_unmutated_RNA.tsv"
+      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/Pathway_analysis/TABLES/GO_Biological_Process_2023_downregulated.tsv"
+    },
+    {
+      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/Pathway_analysis/TABLES/GO_Biological_Process_2023_upregulated.tsv"
+    },
+    {
+      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/Pathway_analysis/TABLES/Reactome_2022_downregulated.tsv"
+    },
+    {
+      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/Pathway_analysis/TABLES/Reactome_2022_upregulated.tsv"
+    },
+    {
+      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/RNA_mutated_unmutated_DOWN_ENRICHR.tsv"
+    },
+    {
+      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/RNA_mutated_unmutated_GENESDOWN.tsv"
     },
     {
       "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/RNA_mutated_unmutated_GENESUP.tsv"
     },
     {
-      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/RNA_mutated_unmutated_GENESDOWN.tsv"
+      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/RNA_mutated_unmutated_UP_ENRICHR.tsv"
+    },
+    {
+      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/Subpopulation_input/mutated_pos_and_unmutated_RNA_counts.tsv"
+    },
+    {
+      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/Subpopulation_input/mutated_pos_and_unmutated_RNA_metadata.tsv"
+    },
+    {
+      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/mutated_unmutated_RNA.tsv"
+    },
+    {
+      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/mutated_unmutated_RNA_RAW_meta.tsv"
+    },
+    {
+      "relative_path": "Transcriptomics/OUTPUT/RNA_mutated_vs_unmutated/mutated_vs_unmutated/mutated_unmutated_RNA_RAW_meta_groups.tsv"
     }
   ]
 }

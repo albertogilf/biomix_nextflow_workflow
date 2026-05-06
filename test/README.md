@@ -25,7 +25,7 @@ environment:
 
 ```bash
 conda run -n biomix_transcriptomics --no-capture-output \
-  nextflow run ./nf_workflow.nf -resume -c nextflow_no_conda.config \
+  nextflow run ./nf_workflow.nf -c nextflow_no_conda.config \
   --biomix_root ./bin/BiomiX2.5 \
   --command_dir ./test/fixtures/egas_transcriptomics_mutated_vs_unmutated \
   --transcriptomics_matrix ./bin/BiomiX2.5/Example_dataset/EGAS00001001746/RNA_seq/EGAS00001001746_transcriptomics.tsv \
@@ -42,7 +42,7 @@ the bundled BiomiX gold standard:
 
 ```bash
 conda run -n biomix_transcriptomics --no-capture-output \
-  nextflow run ./nf_workflow.nf -resume -c nextflow_no_conda.config \
+  nextflow run ./nf_workflow.nf -c nextflow_no_conda.config \
   --biomix_root ./bin/BiomiX2.5 \
   --command_dir ./test/fixtures/egas_transcriptomics_mutated_vs_unmutated \
   --transcriptomics_matrix ./bin/BiomiX2.5/Example_dataset/EGAS00001001746/RNA_seq/EGAS00001001746_transcriptomics.tsv \
@@ -70,7 +70,7 @@ bundled BiomiX methylomics gold standard:
 
 ```bash
 conda run -n biomix_methylomics --no-capture-output \
-  nextflow run ./nf_workflow.nf -resume -c nextflow_no_conda.config \
+  nextflow run ./nf_workflow.nf -c nextflow_no_conda.config \
   --biomix_root ./bin/BiomiX2.5 \
   --command_dir ./test/fixtures/egas_transcriptomics_mutated_vs_unmutated \
   --transcriptomics_matrix ./bin/BiomiX2.5/Example_dataset/EGAS00001001746/RNA_seq/EGAS00001001746_transcriptomics.tsv \
@@ -88,6 +88,48 @@ conda run -n biomix_methylomics --no-capture-output \
 ```
 
 A successful run finishes with `Succeeded: 3`.
+
+## Metabolomics gold-standard test
+
+Create the metabolomics environment from the repository root if needed:
+
+```bash
+mamba env create -f bin/conda_biomix_metabolomics.yml
+conda run -n biomix_metabolomics --no-capture-output \
+  Rscript bin/install_biomix_metabolomics_r_packages.R bin
+```
+
+The helper installs `cmmr`, `metid`, and `metpath`, which are not all available
+from conda-forge/bioconda with the BiomiX versions. If you have the exact
+BiomiX source tarballs, pass their directory as the script argument.
+
+Run the metabolomics workflow and compare the selected TSV outputs against the
+bundled BiomiX metabolomics gold standard:
+
+```bash
+conda run -n biomix_metabolomics --no-capture-output \
+  nextflow run ./nf_workflow.nf -c nextflow_no_conda.config \
+  --biomix_root ./bin/BiomiX2.5 \
+  --command_dir ./test/fixtures/biomix_metabolomics_ptb_vs_hc \
+  --metabolomics_matrix ./bin/BiomiX2.5/Metabolomics/INPUT/MTBLS7623_positive_mode_annotated_HMDB.tsv \
+  --metadata ./bin/BiomiX2.5/Metadata/MTBLS7623_Metadata.tsv \
+  --group_1 PTB \
+  --group_2 HC \
+  --metabolomics_label Plasma \
+  --run_transcriptomics false \
+  --run_metabolomics true \
+  --compare_gold true \
+  --gold_standard_dir ./bin/BiomiX2.5 \
+  --gold_manifest ./test/fixtures/biomix_metabolomics_ptb_vs_hc/gold_manifest_metabolomics.json
+```
+
+A successful run finishes with `Succeeded: 3`.
+
+The workflow publishes TSV outputs for manual inspection under:
+
+- `test/nf_tsv/transcriptomics`
+- `test/nf_tsv/methylomics`
+- `test/nf_tsv/metabolomics`
 
 ## Docker testing
 
@@ -121,6 +163,12 @@ Methylomics-only:
 
 ```
 make test-biomix-methylomics-gold
+```
+
+Metabolomics-only:
+
+```
+make test-biomix-metabolomics-gold
 ```
 
 Transcriptomics + methylomics + MOFA:

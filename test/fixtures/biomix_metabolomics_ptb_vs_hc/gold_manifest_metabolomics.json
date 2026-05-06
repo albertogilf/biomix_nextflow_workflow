@@ -1,0 +1,37 @@
+{
+  "files": [
+    {
+      "relative_path": "Metabolomics/OUTPUT/Plasma_PTB_vs_HC/MetaboAnalyst/Enrichment_Analysis/HMDB_ID_Plasma_PTB_vs_HC.tsv"
+    },
+    {
+      "relative_path": "Metabolomics/OUTPUT/Plasma_PTB_vs_HC/MetaboAnalyst/Joint_Pathway_Analysis/HMDB_ID_Plasma_PTB_vs_HC.tsv"
+    },
+    {
+      "relative_path": "Metabolomics/OUTPUT/Plasma_PTB_vs_HC/MetaboAnalyst/Network_Analysis/HMDB_ID_Plasma_PTB_vs_HC.tsv"
+    },
+    {
+      "relative_path": "Metabolomics/OUTPUT/Plasma_PTB_vs_HC/MetaboAnalyst/Pathway_Analysis/HMDB_ID_Plasma_PTB_vs_HC.tsv"
+    },
+    {
+      "relative_path": "Metabolomics/OUTPUT/Plasma_PTB_vs_HC/PTB_HC_Plasma_metadata.tsv"
+    },
+    {
+      "relative_path": "Metabolomics/OUTPUT/Plasma_PTB_vs_HC/Plasma_PTB_HC_DOWN.tsv"
+    },
+    {
+      "relative_path": "Metabolomics/OUTPUT/Plasma_PTB_vs_HC/Plasma_PTB_HC_METABDOWN.tsv"
+    },
+    {
+      "relative_path": "Metabolomics/OUTPUT/Plasma_PTB_vs_HC/Plasma_PTB_HC_METABUP.tsv"
+    },
+    {
+      "relative_path": "Metabolomics/OUTPUT/Plasma_PTB_vs_HC/Plasma_PTB_HC_UP.tsv"
+    },
+    {
+      "relative_path": "Metabolomics/OUTPUT/Plasma_PTB_vs_HC/Plasma_PTB_vs_HC_peak_statistics.tsv"
+    },
+    {
+      "relative_path": "Metabolomics/OUTPUT/Plasma_PTB_vs_HC/Plasma_PTB_vs_HC_results.tsv"
+    }
+  ]
+}

@@ -81,7 +81,7 @@ Or run it explicitly with the existing `biomix_transcriptomics` environment:
 
 ```bash
 conda run -n biomix_transcriptomics --no-capture-output \
-  nextflow run ./nf_workflow.nf -resume -c nextflow_no_conda.config \
+  nextflow run ./nf_workflow.nf -c nextflow_no_conda.config \
   --biomix_root ./bin/BiomiX2.5 \
   --command_dir ./test/fixtures/egas_transcriptomics_mutated_vs_unmutated \
   --transcriptomics_matrix ./bin/BiomiX2.5/Example_dataset/EGAS00001001746/RNA_seq/EGAS00001001746_transcriptomics.tsv \
