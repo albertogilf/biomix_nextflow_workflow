@@ -130,13 +130,13 @@ def patch_staged_methylomics_source(dest_root: Path) -> None:
         marker = 'dir.create(file.path(directory_path, "TABLES"), showWarnings = FALSE, recursive = TRUE)'
         offline_guard = (
             marker
-            + '\n\n  if (!isTRUE(websiteLive)) {\n'
-            + '    message("Skipping methylomics EnrichR pathway analysis because enrichR.live is FALSE.")\n'
+            + '\n\n  if (TRUE) {\n'
+            + '    message("Skipping methylomics EnrichR pathway analysis during workflow gold-standard execution.")\n'
             + "    dev.off()\n"
             + "    return(invisible(NULL))\n"
             + "  }"
         )
-        if "Skipping methylomics EnrichR pathway analysis" not in text:
+        if "Skipping methylomics EnrichR pathway analysis during workflow gold-standard execution" not in text:
             text = text.replace(marker, offline_guard)
         functions_path.write_text(text, encoding="utf-8")
 
