@@ -148,10 +148,14 @@ make run
 
 ## Makefile gold-standard tests
 
-The transcriptomics and MOFA targets use Nextflow's normal Conda integration,
-which may create cached Conda environments under `work/conda`. The methylomics
-target uses the existing `biomix_methylomics` environment through
-`nextflow_no_conda.config`.
+The workflow configs enable Nextflow's Conda integration with Mamba
+(`conda.useMamba = true`), so cached workflow environments are solved with
+Mamba. The gold-standard comparison step uses the small
+`bin/conda_biomix_test_gold_standards.yml` environment because it only needs
+Python's standard library.
+
+The methylomics target uses the existing `biomix_methylomics` environment
+through `nextflow_no_conda.config`.
 
 Transcriptomics-only:
 
@@ -164,6 +168,9 @@ Methylomics-only:
 ```
 make test-biomix-methylomics-gold
 ```
+
+The methylomics environment pins R to the 4.2 series because the Bioconda
+`bioconductor-champ` package is not built for R 4.4 in the configured channels.
 
 Metabolomics-only:
 

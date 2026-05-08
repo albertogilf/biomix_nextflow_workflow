@@ -31,6 +31,13 @@ params.gold_manifest = ""
 params.gold_atol = 1e-4
 params.gold_rtol = 1e-4
 
+def parseBool(value) {
+    if (value instanceof Boolean) {
+        return value
+    }
+    value?.toString()?.trim()?.toLowerCase() in ['true', '1', 'yes', 'y']
+}
+
 process PREPARE_BIOMIX_WORKSPACE {
     /*
      * Copy the BiomiX checkout and selected fixture inputs into an isolated
@@ -183,6 +190,9 @@ process RUN_METABOLOMICS {
     """
     cp -r "$biomix_workspace" biomix_workspace_post_metabolomics
 
+    Rscript ${moduleDir}/bin/install_biomix_metabolomics_r_packages.R \
+      ${moduleDir}/bin
+
     Rscript ${moduleDir}/bin/biomix_run_metabolomics.R \
       --workspace "\$PWD/biomix_workspace_post_metabolomics" \
       --group1 "${group_1}" \
@@ -231,7 +241,7 @@ process COMPARE_GOLD_STANDARD {
      * Compare generated TSV outputs against a manifest of BiomiX gold-standard
      * files. Numeric columns use configurable absolute and relative tolerances.
      */
-    conda "${moduleDir}/bin/conda_biomix_transcriptomics.yml"
+    conda "${moduleDir}/bin/conda_biomix_test_gold_standards.yml"
 
     input:
     path actual_root
@@ -344,6 +354,12 @@ workflow {
      * Validate CLI parameters, convert paths to Nextflow file values, and
      * launch the reusable Main workflow.
      */
+    run_transcriptomics = parseBool(params.run_transcriptomics)
+    run_methylomics = parseBool(params.run_methylomics)
+    run_metabolomics = parseBool(params.run_metabolomics)
+    run_mofa = parseBool(params.run_mofa)
+    compare_gold = parseBool(params.compare_gold)
+
     [
         biomix_root: params.biomix_root,
         command_dir: params.command_dir,
@@ -356,17 +372,17 @@ workflow {
         }
     }
 
-    if (params.run_transcriptomics && !params.transcriptomics_matrix?.toString()?.trim()) {
+    if (run_transcriptomics && !params.transcriptomics_matrix?.toString()?.trim()) {
         error "Missing required parameter: --transcriptomics_matrix"
     }
-    if (params.run_methylomics && !params.methylomics_matrix?.toString()?.trim()) {
+    if (run_methylomics && !params.methylomics_matrix?.toString()?.trim()) {
         error "Missing required parameter: --methylomics_matrix"
     }
-    if (params.run_metabolomics && !params.metabolomics_matrix?.toString()?.trim()) {
+    if (run_metabolomics && !params.metabolomics_matrix?.toString()?.trim()) {
         error "Missing required parameter: --metabolomics_matrix"
     }
 
-    if (params.compare_gold) {
+    if (compare_gold) {
         if (!params.gold_standard_dir?.toString()?.trim()) {
             error "Missing required parameter: --gold_standard_dir"
         }
@@ -387,13 +403,13 @@ workflow {
         transcriptomics_label: params.transcriptomics_label,
         methylomics_label: params.methylomics_label,
         metabolomics_label: params.metabolomics_label,
-        run_mofa: params.run_mofa,
-        run_transcriptomics: params.run_transcriptomics,
-        run_methylomics: params.run_methylomics,
-        run_metabolomics: params.run_metabolomics,
-        compare_gold: params.compare_gold,
-        gold_standard_dir: params.compare_gold ? file(params.gold_standard_dir, checkIfExists: true) : null,
-        gold_manifest: params.compare_gold ? file(params.gold_manifest, checkIfExists: true) : null,
+        run_mofa: run_mofa,
+        run_transcriptomics: run_transcriptomics,
+        run_methylomics: run_methylomics,
+        run_metabolomics: run_metabolomics,
+        compare_gold: compare_gold,
+        gold_standard_dir: compare_gold ? file(params.gold_standard_dir, checkIfExists: true) : null,
+        gold_manifest: compare_gold ? file(params.gold_manifest, checkIfExists: true) : null,
         gold_atol: params.gold_atol,
         gold_rtol: params.gold_rtol
     ]

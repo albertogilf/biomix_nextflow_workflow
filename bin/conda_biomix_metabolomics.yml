@@ -5,7 +5,7 @@ channels:
 dependencies:
   - python=3.11
   # R 4.5 / Bioconductor 3.22 is the tested stack for the metabolomics gold test.
-  - r-base=4.5
+  - r-base=4.4.3
   - zlib
   - r-vroom=1.6.5
   - r-dplyr=1.1.4

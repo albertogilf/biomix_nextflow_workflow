@@ -91,10 +91,11 @@ conda run -n biomix_transcriptomics --no-capture-output \
   --transcriptomics_label RNA
 ```
 
-`nextflow.config` lets Nextflow create a cached Conda environment from
-`bin/conda_biomix_transcriptomics.yml`. `nextflow_no_conda.config` disables
-that cache and uses the already-installed `biomix_transcriptomics` environment
-from the command above.
+`nextflow.config` lets Nextflow create cached Conda environments with Mamba
+(`conda.useMamba = true`). `nextflow_no_conda.config` disables that cache and
+uses the already-installed `biomix_transcriptomics` environment from the command
+above. Gold-standard comparison uses its own minimal Python environment:
+`bin/conda_biomix_test_gold_standards.yml`.
 
 ## Requirements
 

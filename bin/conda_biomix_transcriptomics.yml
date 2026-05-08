@@ -5,7 +5,7 @@ channels:
 dependencies:
   - python=3.11
   - numpy>=2.0.0
-  - r-base=4.5
+  - r-base=4.4.1
   - r-vroom=1.6.5
   - r-dplyr=1.1.4
   - r-tidyverse=2.0.0
